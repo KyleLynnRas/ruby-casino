@@ -18,8 +18,9 @@ class Player
     end
 
     #add cards
-    def add_hand hand
-      hand[0].value + hand[1].value
+    def add_hand cards
+        card_val = cards.map { |card| card.value}
+        card_val.sum
     end
 
     #check bankroll
@@ -78,7 +79,7 @@ deck = fill_deck(val_arr)
 
 #Game loop
 until human.bankroll <= 0 do
-  puts "What would you like to do? To deal press d, to quit press q. To check bankroll enter bank"
+  puts "What would you like to do? To quit enter q, to check bankroll enter bank or to deal enter any other key"
   human_choice = gets.chomp
 #   puts human_choice
   
@@ -116,7 +117,37 @@ until human.bankroll <= 0 do
     human_cards = human.add_hand(human.hand)
     the_house_cards = the_house.add_hand(the_house.hand)
 
-    #printed results of hand sums / choose bet 
+    
+    #stay or hit option 
+    puts "Your cards equal #{human_cards}. Do you want to hit (enter h) or stay (enter any other key)?"
+
+    input = gets.chomp
+
+    #if choose hit 
+    if input === "h" 
+        #add one card to hand 
+        human.hand.push(deck.shift())
+        # puts human.hand
+        #add total up 
+        human_cards = human.add_hand(human.hand)
+        # p human_cards
+        #bust
+        if human_cards > 21
+            #subtract initial bet from bankroll if bust 
+            human.bankroll -= 10
+            the_house.bankroll += 10
+            # p "human #{human.bankroll} and house #{the_house.bankroll}"
+            p "Yikes, #{human_cards}....That's a bust, you lose!"
+            break
+        end
+    else
+        puts "Ok, sometimes you just have to play it safe."
+    end
+    
+    #redefine total cards 
+    human_cards = human.add_hand(human.hand)
+
+    #raise from initial bet?
     puts "Your cards equal #{human_cards}, how much do you want to raise your bet? If you want to keep it the same, enter 0. To check your bankroll enter bank" 
 
     input = gets.chomp
